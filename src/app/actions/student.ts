@@ -81,30 +81,26 @@ export async function savePreferences(trackIds: string[]) {
   return { success: true, message: "Preferencias salvas com sucesso!" };
 }
 
-export async function performCheckin(token: string) {
+export async function performCheckin(password: string) {
   const student = await getOrCreateStudent();
   const supabase = createAdminClient();
 
-  const { data: lesson, error: lessonError } = await supabase
+  // Find open lesson with matching password
+  const { data: lesson } = await supabase
     .from("lessons")
-    .select("id, title, checkin_expires_at")
-    .eq("checkin_token", token)
+    .select("id, title")
+    .eq("checkin_password", password.toUpperCase().trim())
+    .eq("checkin_open", true)
     .single();
 
-  if (lessonError || !lesson) {
+  if (!lesson) {
     return {
       success: false,
-      message: "Token de check-in invalido ou expirado.",
+      message: "Senha incorreta ou check-in fechado para esta aula.",
     };
   }
 
-  if (
-    lesson.checkin_expires_at &&
-    new Date(lesson.checkin_expires_at) < new Date()
-  ) {
-    return { success: false, message: "O check-in para esta aula ja expirou." };
-  }
-
+  // Check if already checked in
   const { data: existing } = await supabase
     .from("attendances")
     .select("id")

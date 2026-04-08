@@ -1,51 +1,8 @@
-import { CheckCircle, XCircle, QrCode, Smartphone } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { performCheckin } from "@/app/actions/student";
-import { QrScanner } from "./qr-scanner";
+import { CheckinForm } from "./checkin-form";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckinPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ token?: string }>;
-}) {
-  const { token } = await searchParams;
-
-  // If accessed via QR link with token, do checkin directly
-  if (token) {
-    const result = await performCheckin(token);
-
-    return (
-      <div className="flex flex-col items-center justify-center gap-8 py-16">
-        <div
-          className={`flex h-28 w-28 items-center justify-center rounded-full ${
-            result.success
-              ? "bg-gradient-to-br from-green-100 to-green-50"
-              : "bg-gradient-to-br from-red-100 to-red-50"
-          }`}
-        >
-          {result.success ? (
-            <CheckCircle className="h-16 w-16 text-green-500" />
-          ) : (
-            <XCircle className="h-16 w-16 text-destructive" />
-          )}
-        </div>
-        <Card className="w-full max-w-md text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl">
-              {result.success ? "Check-in Realizado!" : "Erro no Check-in"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">{result.message}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // No token — show scanner
+export default function CheckinPage() {
   return (
     <div className="flex flex-col items-center gap-8 py-8">
       <div className="text-center">
@@ -53,24 +10,24 @@ export default async function CheckinPage({
           Check-in de Presenca
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Escaneie o QR Code exibido pelo professor para registrar sua presenca.
+          Digite a senha exibida pelo professor para registrar sua presenca.
         </p>
       </div>
 
-      <QrScanner />
+      <CheckinForm />
 
       <div className="flex items-center gap-6 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
             1
           </div>
-          Abra a camera
+          Veja a senha no telao
         </div>
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
             2
           </div>
-          Aponte pro QR
+          Digite aqui
         </div>
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">

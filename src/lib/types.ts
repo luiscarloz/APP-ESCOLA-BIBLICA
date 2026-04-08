@@ -42,6 +42,8 @@ export interface Lesson {
   date: string;
   checkin_token: string | null;
   checkin_expires_at: string | null;
+  checkin_password: string | null;
+  checkin_open: boolean;
   created_at: string;
 }
 

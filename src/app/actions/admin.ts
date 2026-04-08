@@ -57,24 +57,21 @@ export async function deleteLesson(id: string) {
   revalidatePath("/admin/aulas");
 }
 
-export async function generateCheckinToken(lessonId: string) {
+export async function setCheckinPassword(lessonId: string, password: string) {
   await requireAdmin();
   const supabase = createAdminClient();
-
-  const token = randomUUID();
-  const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(); // 2 hours
 
   const { error } = await supabase
     .from("lessons")
     .update({
-      checkin_token: token,
-      checkin_expires_at: expiresAt,
+      checkin_password: password.toUpperCase().trim(),
+      checkin_open: true,
     })
     .eq("id", lessonId);
 
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/aulas/${lessonId}`);
-  return token;
+  revalidatePath("/admin/aulas");
 }
 
 export async function closeCheckin(lessonId: string) {
@@ -84,13 +81,27 @@ export async function closeCheckin(lessonId: string) {
   const { error } = await supabase
     .from("lessons")
     .update({
-      checkin_token: null,
-      checkin_expires_at: null,
+      checkin_open: false,
     })
     .eq("id", lessonId);
 
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/aulas/${lessonId}`);
+  revalidatePath("/admin/aulas");
+}
+
+export async function openCheckin(lessonId: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("lessons")
+    .update({ checkin_open: true })
+    .eq("id", lessonId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/aulas/${lessonId}`);
+  revalidatePath("/admin/aulas");
 }
 
 // ---- TASKS ----

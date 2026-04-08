@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
 import type { Lesson, Student } from "@/lib/types";
-import { CheckinQRSection } from "./checkin-qr";
+import { CheckinPasswordSection } from "./checkin-qr";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +85,7 @@ export default async function AulaDetailPage({
 
       <Separator />
 
-      <CheckinQRSection lesson={typedLesson} />
+      <CheckinPasswordSection lesson={typedLesson} />
 
       <Separator />
 
