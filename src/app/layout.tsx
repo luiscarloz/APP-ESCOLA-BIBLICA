@@ -16,8 +16,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Escola Biblica",
-  description: "Sistema de gerenciamento da Escola Biblica",
+  title: "Escola Biblica IIR",
+  description:
+    "Escola Biblica IIR Brasil — Aulas, presenca e acompanhamento do curso.",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Escola Biblica IIR Brasil",
+    description: "12 semanas de aprendizado, comunhao e crescimento espiritual.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Escola Biblica IIR Brasil",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Escola Biblica IIR Brasil",
+    description: "12 semanas de aprendizado, comunhao e crescimento espiritual.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

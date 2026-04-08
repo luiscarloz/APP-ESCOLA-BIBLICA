@@ -1,8 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
-import { BookOpen, GraduationCap, KeyRound, ClipboardCheck } from "lucide-react";
+import { GraduationCap, KeyRound, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -28,9 +29,14 @@ export default async function HomePage() {
         <div className="pointer-events-none absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl" />
 
         <div className="relative flex flex-col items-center gap-6 text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/25">
-            <BookOpen className="h-10 w-10 text-primary-foreground" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Escola Biblica IIR"
+            width={200}
+            height={200}
+            className="h-32 w-auto object-contain"
+            priority
+          />
           <div className="space-y-3">
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">
               Escola{" "}

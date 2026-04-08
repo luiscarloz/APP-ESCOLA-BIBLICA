@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import {
@@ -39,10 +40,8 @@ export default function AdminLayout({
     <div className="flex min-h-screen bg-muted/30">
       {/* Mobile header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-xl md:hidden">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70">
-            <BookOpen className="h-4 w-4 text-primary-foreground" />
-          </div>
+        <div className="flex items-center gap-2">
+          <Image src="/logo.png" alt="Escola Biblica" width={32} height={32} className="h-8 w-8 object-contain" />
           <span className="font-bold tracking-tight">Admin</span>
         </div>
         <div className="flex items-center gap-3">
@@ -77,9 +76,7 @@ export default function AdminLayout({
         )}
       >
         <div className="hidden md:flex h-16 items-center gap-3 border-b px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-md shadow-primary/20">
-            <BookOpen className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <Image src="/logo.png" alt="Escola Biblica" width={36} height={36} className="h-9 w-9 object-contain" />
           <div>
             <span className="font-bold tracking-tight">Escola Biblica</span>
             <p className="text-xs text-muted-foreground">Painel Admin</p>
