@@ -35,7 +35,16 @@ export async function getOrCreateStudent() {
     .select("*")
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    // Race condition — try fetching again
+    const { data: retry } = await supabase
+      .from("students")
+      .select("*")
+      .eq("clerk_id", userId)
+      .single();
+    if (retry) return retry;
+    throw new Error(error.message);
+  }
   return created!;
 }
 

@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
-import { getOrCreateStudent } from "@/app/actions/student";
+import { getOrCreateStudentServer } from "@/lib/get-student";
 import type { CourseTrack } from "@/lib/types";
 import { TrackRanker } from "./track-ranker";
 
@@ -11,7 +11,8 @@ export default async function EscolherAulaPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const student = await getOrCreateStudent();
+  const student = await getOrCreateStudentServer();
+  if (!student) redirect("/sign-in");
 
   // If already set and can't change, go to dashboard
   if (student.preferences_set && !student.can_change_preferences) {

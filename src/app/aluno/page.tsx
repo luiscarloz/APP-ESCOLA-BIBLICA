@@ -15,7 +15,7 @@ import {
 import { NewsCard } from "@/components/news-card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getOrCreateStudent } from "@/app/actions/student";
+import { getOrCreateStudentServer } from "@/lib/get-student";
 import type { News, CourseTrack } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -34,13 +34,12 @@ const colorMap: Record<string, string> = {
   amber: "from-amber-500 to-amber-600",
 };
 
-const priorityLabels = ["1a Opcao", "2a Opcao", "3a Opcao", "4a Opcao"];
-
 export default async function AlunoDashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const student = await getOrCreateStudent();
+  const student = await getOrCreateStudentServer();
+  if (!student) redirect("/sign-in");
 
   // If preferences not set, redirect to choose
   if (!student.preferences_set) {

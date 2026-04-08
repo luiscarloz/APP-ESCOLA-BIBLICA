@@ -12,10 +12,14 @@ export default async function HomePage() {
   const { userId } = await auth();
 
   if (userId) {
-    const user = await currentUser();
-    const role = user?.publicMetadata?.role as string | undefined;
-    if (role === "admin") {
-      redirect("/admin");
+    try {
+      const user = await currentUser();
+      const role = user?.publicMetadata?.role as string | undefined;
+      if (role === "admin") {
+        redirect("/admin");
+      }
+    } catch {
+      // Clerk session not fully ready yet, continue to /aluno
     }
     redirect("/aluno");
   }
