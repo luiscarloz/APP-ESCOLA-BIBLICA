@@ -122,18 +122,18 @@ export default async function AlunoDashboard() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2">
               {preferences.slice(1).map((pref, i) => {
                 const PrefIcon =
                   iconMap[pref.course_tracks?.icon || "book-open"] || BookOpen;
                 return (
                   <div
                     key={pref.track_id}
-                    className="flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-xs backdrop-blur-sm"
+                    className="flex items-center gap-1.5 rounded-lg bg-white/15 px-2.5 py-1 text-xs backdrop-blur-sm"
                   >
                     <span className="font-bold">{i + 2}a</span>
-                    <PrefIcon className="h-3 w-3" />
-                    {pref.course_tracks.name}
+                    <PrefIcon className="h-3 w-3 shrink-0" />
+                    <span className="truncate">{pref.course_tracks.name}</span>
                   </div>
                 );
               })}

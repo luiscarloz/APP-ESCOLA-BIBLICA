@@ -16,25 +16,19 @@ export default function CheckinPage() {
 
       <CheckinForm />
 
-      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-            1
+      <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+        {[
+          { n: "1", label: "Veja a senha" },
+          { n: "2", label: "Digite aqui" },
+          { n: "3", label: "Pronto!" },
+        ].map((step) => (
+          <div key={step.n} className="flex items-center gap-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+              {step.n}
+            </div>
+            {step.label}
           </div>
-          Veja a senha no telao
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-            2
-          </div>
-          Digite aqui
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-            3
-          </div>
-          Pronto!
-        </div>
+        ))}
       </div>
     </div>
   );

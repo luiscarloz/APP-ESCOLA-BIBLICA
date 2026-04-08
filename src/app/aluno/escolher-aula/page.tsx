@@ -50,7 +50,7 @@ export default async function EscolherAulaPage() {
           </p>
           {student.preferences_set && student.can_change_preferences && (
             <p className="mt-2 text-sm text-amber-600">
-              Voce ja ordenou, mas ainda pode alterar ate semana que vem.
+              Voce ja ordenou suas preferencias, mas ainda pode alterar.
             </p>
           )}
         </div>

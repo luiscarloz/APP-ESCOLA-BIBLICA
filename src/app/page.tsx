@@ -2,7 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { BookOpen, GraduationCap, QrCode, ClipboardCheck } from "lucide-react";
+import { BookOpen, GraduationCap, KeyRound, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -70,9 +70,9 @@ export default async function HomePage() {
         <div className="relative mt-8 grid w-full max-w-3xl gap-4 sm:grid-cols-3">
           {[
             {
-              icon: QrCode,
-              title: "Check-in por QR",
-              desc: "Registre sua presenca escaneando o QR Code da aula.",
+              icon: KeyRound,
+              title: "Check-in por Senha",
+              desc: "Registre sua presenca com a senha da aula.",
             },
             {
               icon: ClipboardCheck,
