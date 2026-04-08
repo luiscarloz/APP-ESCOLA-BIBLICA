@@ -1,21 +1,51 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, BookOpen, ClipboardList, CalendarDays } from "lucide-react";
+import type { CourseTrack } from "@/lib/types";
+import { PreferenceCharts } from "./preference-charts";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const supabase = createAdminClient();
 
-  const [studentsRes, lessonsRes, tasksRes, attendancesRes] =
+  const [studentsRes, lessonsRes, tasksRes, attendancesRes, tracksRes, prefsRes] =
     await Promise.all([
       supabase.from("students").select("id", { count: "exact", head: true }),
       supabase.from("lessons").select("id", { count: "exact", head: true }),
       supabase.from("tasks").select("id", { count: "exact", head: true }),
-      supabase
-        .from("attendances")
-        .select("id", { count: "exact", head: true }),
+      supabase.from("attendances").select("id", { count: "exact", head: true }),
+      supabase.from("course_tracks").select("*").order("created_at"),
+      supabase.from("student_track_preferences").select("track_id, priority"),
     ]);
+
+  const tracks = (tracksRes.data ?? []) as CourseTrack[];
+  const prefs = (prefsRes.data ?? []) as { track_id: string; priority: number }[];
+
+  // Build chart data: for each priority level, count per track
+  const chartData = tracks.map((track) => {
+    const counts: Record<string, number> = { name: 0 } as any;
+    for (let p = 1; p <= 4; p++) {
+      counts[`p${p}`] = prefs.filter(
+        (pref) => pref.track_id === track.id && pref.priority === p
+      ).length;
+    }
+    return {
+      name: track.name,
+      color: track.color || "violet",
+      "1a Opcao": counts.p1,
+      "2a Opcao": counts.p2,
+      "3a Opcao": counts.p3,
+      "4a Opcao": counts.p4,
+    };
+  });
+
+  // Pie data: just 1st choice distribution
+  const pieData = tracks.map((track) => ({
+    name: track.name,
+    value: prefs.filter((p) => p.track_id === track.id && p.priority === 1).length,
+    color: track.color || "violet",
+  }));
 
   const stats = [
     {
@@ -83,6 +113,9 @@ export default async function AdminDashboardPage() {
           </Card>
         ))}
       </div>
+
+      {/* Charts */}
+      <PreferenceCharts pieData={pieData} barData={chartData} />
     </div>
   );
 }
