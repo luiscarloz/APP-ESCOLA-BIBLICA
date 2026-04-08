@@ -1,0 +1,166 @@
+"use server";
+
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { revalidatePath } from "next/cache";
+import { randomUUID } from "crypto";
+
+async function requireAdmin() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Nao autenticado");
+  const user = await currentUser();
+  if (user?.publicMetadata?.role !== "admin") throw new Error("Nao autorizado");
+  return userId;
+}
+
+// ---- LESSONS ----
+
+export async function createLesson(formData: FormData) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("lessons").insert({
+    week_number: Number(formData.get("week_number")),
+    title: formData.get("title") as string,
+    description: (formData.get("description") as string) || null,
+    date: formData.get("date") as string,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/aulas");
+}
+
+export async function updateLesson(id: string, formData: FormData) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("lessons")
+    .update({
+      week_number: Number(formData.get("week_number")),
+      title: formData.get("title") as string,
+      description: (formData.get("description") as string) || null,
+      date: formData.get("date") as string,
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/aulas");
+}
+
+export async function deleteLesson(id: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("lessons").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/aulas");
+}
+
+export async function generateCheckinToken(lessonId: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const token = randomUUID();
+  const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(); // 2 hours
+
+  const { error } = await supabase
+    .from("lessons")
+    .update({
+      checkin_token: token,
+      checkin_expires_at: expiresAt,
+    })
+    .eq("id", lessonId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/aulas/${lessonId}`);
+  return token;
+}
+
+export async function closeCheckin(lessonId: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("lessons")
+    .update({
+      checkin_token: null,
+      checkin_expires_at: null,
+    })
+    .eq("id", lessonId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/aulas/${lessonId}`);
+}
+
+// ---- TASKS ----
+
+export async function createTask(formData: FormData) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const lessonId = formData.get("lesson_id") as string;
+  const { error } = await supabase.from("tasks").insert({
+    lesson_id: lessonId || null,
+    title: formData.get("title") as string,
+    description: (formData.get("description") as string) || null,
+    due_date: (formData.get("due_date") as string) || null,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tarefas");
+}
+
+export async function updateTask(id: string, formData: FormData) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const lessonId = formData.get("lesson_id") as string;
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      lesson_id: lessonId || null,
+      title: formData.get("title") as string,
+      description: (formData.get("description") as string) || null,
+      due_date: (formData.get("due_date") as string) || null,
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tarefas");
+}
+
+export async function deleteTask(id: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("tasks").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tarefas");
+}
+
+// ---- NEWS ----
+
+export async function createNews(formData: FormData) {
+  const userId = await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("news").insert({
+    title: formData.get("title") as string,
+    content: formData.get("content") as string,
+    image_url: (formData.get("image_url") as string) || null,
+    created_by: userId,
+  });
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/noticias");
+}
+
+export async function deleteNews(id: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("news").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/noticias");
+}
