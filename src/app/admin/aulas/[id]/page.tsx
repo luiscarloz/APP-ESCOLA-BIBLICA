@@ -75,7 +75,7 @@ export default async function AulaDetailPage({
       {typedLesson.description && (
         <Card>
           <CardHeader>
-            <CardTitle>Descricao</CardTitle>
+            <CardTitle>Descrição</CardTitle>
           </CardHeader>
           <CardContent>
             <p>{typedLesson.description}</p>
@@ -91,7 +91,7 @@ export default async function AulaDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Presencas</CardTitle>
+          <CardTitle>Presenças</CardTitle>
           <CardDescription>
             {typedAttendances.length} aluno(s) presente(s)
           </CardDescription>
@@ -107,7 +107,7 @@ export default async function AulaDetailPage({
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Horario</TableHead>
+                  <TableHead>Horário</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

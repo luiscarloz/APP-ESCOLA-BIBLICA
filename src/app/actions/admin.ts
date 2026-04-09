@@ -7,9 +7,9 @@ import { randomUUID } from "crypto";
 
 async function requireAdmin() {
   const { userId } = await auth();
-  if (!userId) throw new Error("Nao autenticado");
+  if (!userId) throw new Error("Não autenticado");
   const user = await currentUser();
-  if (user?.publicMetadata?.role !== "admin") throw new Error("Nao autorizado");
+  if (user?.publicMetadata?.role !== "admin") throw new Error("Não autorizado");
   return userId;
 }
 

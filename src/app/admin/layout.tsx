@@ -23,7 +23,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: Home },
   { href: "/admin/aulas", label: "Aulas", icon: CalendarDays },
   { href: "/admin/tarefas", label: "Tarefas", icon: ClipboardList },
-  { href: "/admin/noticias", label: "Noticias", icon: Newspaper },
+  { href: "/admin/noticias", label: "Notícias", icon: Newspaper },
   { href: "/admin/alunos", label: "Alunos", icon: Users },
   { href: "/admin/certificados", label: "Certificados", icon: Award },
 ];
@@ -41,7 +41,7 @@ export default function AdminLayout({
       {/* Mobile header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Escola Biblica" width={32} height={32} className="h-8 w-8 object-contain" />
+          <Image src="/logo.png" alt="Escola Bíblica" width={32} height={32} className="h-8 w-8 object-contain" />
           <span className="font-bold tracking-tight">Admin</span>
         </div>
         <div className="flex items-center gap-3">
@@ -76,9 +76,9 @@ export default function AdminLayout({
         )}
       >
         <div className="hidden md:flex h-16 items-center gap-3 border-b px-6">
-          <Image src="/logo.png" alt="Escola Biblica" width={36} height={36} className="h-9 w-9 object-contain" />
+          <Image src="/logo.png" alt="Escola Bíblica" width={36} height={36} className="h-9 w-9 object-contain" />
           <div>
-            <span className="font-bold tracking-tight">Escola Biblica</span>
+            <span className="font-bold tracking-tight">Escola Bíblica</span>
             <p className="text-xs text-muted-foreground">Painel Admin</p>
           </div>
         </div>

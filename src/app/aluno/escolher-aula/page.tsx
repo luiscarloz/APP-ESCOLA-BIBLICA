@@ -42,16 +42,16 @@ export default async function EscolherAulaPage() {
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             Ordene suas{" "}
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Preferencias
+              Preferências
             </span>
           </h1>
           <p className="mt-3 text-muted-foreground">
-            Clique nas aulas na ordem de sua preferencia: da mais desejada para
+            Clique nas aulas na ordem de sua preferência: da mais desejada para
             a menos desejada.
           </p>
           {student.preferences_set && student.can_change_preferences && (
             <p className="mt-2 text-sm text-amber-600">
-              Voce ja ordenou suas preferencias, mas ainda pode alterar.
+              Você já ordenou suas preferências, mas ainda pode alterar.
             </p>
           )}
         </div>

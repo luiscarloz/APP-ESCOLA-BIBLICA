@@ -35,7 +35,7 @@ export default async function HomePage() {
         <div className="relative flex flex-col items-center gap-6 text-center">
           <Image
             src="/logo.png"
-            alt="Escola Biblica IIR"
+            alt="Escola Bíblica IIR"
             width={200}
             height={200}
             className="h-32 w-auto object-contain"
@@ -45,12 +45,12 @@ export default async function HomePage() {
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">
               Escola{" "}
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Biblica
+                Bíblica
               </span>
             </h1>
             <p className="mx-auto max-w-lg text-lg text-muted-foreground">
-              12 semanas de aprendizado, comunhao e crescimento espiritual.
-              Acompanhe suas aulas, tarefas e presenca em um so lugar.
+              12 semanas de aprendizado, comunhão e crescimento espiritual.
+              Acompanhe suas aulas, tarefas e presença em um só lugar.
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default async function HomePage() {
             {
               icon: KeyRound,
               title: "Check-in por Senha",
-              desc: "Registre sua presenca com a senha da aula.",
+              desc: "Registre sua presença com a senha da aula.",
             },
             {
               icon: ClipboardCheck,

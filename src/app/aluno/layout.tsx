@@ -21,11 +21,11 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const navItems = [
-  { href: "/aluno", label: "Inicio", icon: Home },
+  { href: "/aluno", label: "Início", icon: Home },
   { href: "/aluno/escolher-aula", label: "Minha Aula", icon: GraduationCap },
   { href: "/aluno/aulas", label: "Aulas", icon: CalendarDays },
   { href: "/aluno/tarefas", label: "Tarefas", icon: ClipboardList },
-  { href: "/aluno/noticias", label: "Noticias", icon: Newspaper },
+  { href: "/aluno/noticias", label: "Notícias", icon: Newspaper },
   { href: "/aluno/checkin", label: "Check-in", icon: QrCode },
   { href: "/aluno/certificado", label: "Certificado", icon: Award },
 ];
@@ -43,8 +43,8 @@ export default function AlunoLayout({
       {/* Mobile header */}
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Escola Biblica" width={32} height={32} className="h-8 w-8 object-contain" />
-          <span className="font-bold tracking-tight">Escola Biblica</span>
+          <Image src="/logo.png" alt="Escola Bíblica" width={32} height={32} className="h-8 w-8 object-contain" />
+          <span className="font-bold tracking-tight">Escola Bíblica</span>
         </div>
         <div className="flex items-center gap-3">
           <UserButton />
@@ -78,10 +78,10 @@ export default function AlunoLayout({
         )}
       >
         <div className="hidden md:flex h-16 items-center gap-3 border-b px-6">
-          <Image src="/logo.png" alt="Escola Biblica" width={36} height={36} className="h-9 w-9 object-contain" />
+          <Image src="/logo.png" alt="Escola Bíblica" width={36} height={36} className="h-9 w-9 object-contain" />
           <div>
-            <span className="font-bold tracking-tight">Escola Biblica</span>
-            <p className="text-xs text-muted-foreground">Area do Aluno</p>
+            <span className="font-bold tracking-tight">Escola Bíblica</span>
+            <p className="text-xs text-muted-foreground">Área do Aluno</p>
           </div>
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-4">

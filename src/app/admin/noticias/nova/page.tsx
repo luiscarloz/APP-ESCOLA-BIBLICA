@@ -33,28 +33,28 @@ export default function NovaNoticiaPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Nova Noticia</h1>
+          <h1 className="text-3xl font-bold">Nova Notícia</h1>
           <p className="text-muted-foreground">
-            Crie uma nova noticia para os alunos
+            Crie uma nova notícia para os alunos
           </p>
         </div>
       </div>
 
       <Card className="max-w-2xl">
         <CardHeader>
-          <CardTitle>Dados da Noticia</CardTitle>
+          <CardTitle>Dados da Notícia</CardTitle>
           <CardDescription>
-            Preencha os campos abaixo para criar uma nova noticia.
+            Preencha os campos abaixo para criar uma nova notícia.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Titulo</Label>
+              <Label htmlFor="title">Título</Label>
               <Input id="title" name="title" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content">Conteudo</Label>
+              <Label htmlFor="content">Conteúdo</Label>
               <Textarea
                 id="content"
                 name="content"
@@ -72,7 +72,7 @@ export default function NovaNoticiaPage() {
               />
             </div>
             <Button type="submit" className="w-full">
-              Publicar Noticia
+              Publicar Notícia
             </Button>
           </form>
         </CardContent>

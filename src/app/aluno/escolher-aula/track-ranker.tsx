@@ -59,7 +59,7 @@ const colorConfig: Record<
   },
 };
 
-const priorityLabels = ["1a Opcao", "2a Opcao", "3a Opcao", "4a Opcao"];
+const priorityLabels = ["1a Opção", "2a Opção", "3a Opção", "4a Opção"];
 
 export function TrackRanker({
   tracks,
@@ -126,7 +126,7 @@ export function TrackRanker({
       {rankedTracks.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm font-medium text-muted-foreground">
-            Sua ordem de preferencia:
+            Sua ordem de preferência:
           </p>
           <div className="space-y-2">
             {rankedTracks.map((track, i) => {
@@ -193,8 +193,8 @@ export function TrackRanker({
         <div className="space-y-3">
           <p className="text-sm font-medium text-muted-foreground">
             {ranked.length === 0
-              ? "Clique na sua 1a opcao:"
-              : `Clique na sua ${ranked.length + 1}a opcao:`}
+              ? "Clique na sua 1a opção:"
+              : `Clique na sua ${ranked.length + 1}a opção:`}
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {unranked.map((track) => {
@@ -229,7 +229,7 @@ export function TrackRanker({
         {ranked.length > 0 && (
           <Button variant="outline" onClick={handleReset} className="rounded-xl">
             <RotateCcw className="mr-2 h-4 w-4" />
-            Recomecar
+            Recomeçar
           </Button>
         )}
         <Button
@@ -244,7 +244,7 @@ export function TrackRanker({
               Salvando...
             </>
           ) : (
-            "Confirmar Preferencias"
+            "Confirmar Preferências"
           )}
         </Button>
       </div>

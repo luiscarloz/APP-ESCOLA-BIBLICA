@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function getOrCreateStudent() {
   const { userId } = await auth();
-  if (!userId) throw new Error("Nao autenticado");
+  if (!userId) throw new Error("Não autenticado");
 
   const supabase = createAdminClient();
 
@@ -19,7 +19,7 @@ export async function getOrCreateStudent() {
   if (existing) return existing;
 
   const user = await currentUser();
-  if (!user) throw new Error("Usuario nao encontrado");
+  if (!user) throw new Error("Usuário não encontrado");
 
   const { data: created, error } = await supabase
     .from("students")
@@ -54,11 +54,11 @@ export async function savePreferences(trackIds: string[]) {
   const supabase = createAdminClient();
 
   if (student.preferences_set && !student.can_change_preferences) {
-    return { success: false, message: "Voce nao pode mais alterar suas preferencias." };
+    return { success: false, message: "Você não pode mais alterar suas preferências." };
   }
 
   if (trackIds.length !== 4) {
-    return { success: false, message: "Voce precisa ordenar todas as 4 aulas." };
+    return { success: false, message: "Você precisa ordenar todas as 4 aulas." };
   }
 
   // Delete existing preferences
@@ -87,7 +87,7 @@ export async function savePreferences(trackIds: string[]) {
     .eq("id", student.id);
 
   revalidatePath("/aluno");
-  return { success: true, message: "Preferencias salvas com sucesso!" };
+  return { success: true, message: "Preferências salvas com sucesso!" };
 }
 
 export async function performCheckin(password: string) {
@@ -120,7 +120,7 @@ export async function performCheckin(password: string) {
   if (existing) {
     return {
       success: true,
-      message: `Voce ja fez check-in na aula: ${lesson.title}`,
+      message: `Você já fez check-in na aula: ${lesson.title}`,
     };
   }
 
@@ -130,7 +130,7 @@ export async function performCheckin(password: string) {
   });
 
   if (error) {
-    return { success: false, message: "Erro ao registrar presenca." };
+    return { success: false, message: "Erro ao registrar presença." };
   }
 
   revalidatePath("/aluno");

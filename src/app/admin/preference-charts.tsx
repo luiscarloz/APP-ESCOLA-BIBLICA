@@ -32,10 +32,10 @@ interface PieDataItem {
 interface BarDataItem {
   name: string;
   color: string;
-  "1a Opcao": number;
-  "2a Opcao": number;
-  "3a Opcao": number;
-  "4a Opcao": number;
+  "1a Opção": number;
+  "2a Opção": number;
+  "3a Opção": number;
+  "4a Opção": number;
 }
 
 export function PreferenceCharts({
@@ -52,7 +52,7 @@ export function PreferenceCharts({
       {/* Pie chart - 1st choice */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">1a Opcao dos Alunos</CardTitle>
+          <CardTitle className="text-base">1a Opção dos Alunos</CardTitle>
         </CardHeader>
         <CardContent>
           {totalVotes === 0 ? (
@@ -114,7 +114,7 @@ export function PreferenceCharts({
       <Card>
         <CardHeader>
           <CardTitle className="text-base">
-            Distribuicao por Prioridade
+            Distribuição por Prioridade
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -139,10 +139,10 @@ export function PreferenceCharts({
                 />
                 <Tooltip />
                 <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="1a Opcao" fill={PRIORITY_COLORS[0]} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="2a Opcao" fill={PRIORITY_COLORS[1]} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="3a Opcao" fill={PRIORITY_COLORS[2]} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="4a Opcao" fill={PRIORITY_COLORS[3]} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="1a Opção" fill={PRIORITY_COLORS[0]} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="2a Opção" fill={PRIORITY_COLORS[1]} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="3a Opção" fill={PRIORITY_COLORS[2]} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="4a Opção" fill={PRIORITY_COLORS[3]} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}

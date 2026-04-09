@@ -63,7 +63,7 @@ export default function AulasPage() {
         <div>
           <h1 className="text-3xl font-bold">Aulas</h1>
           <p className="text-muted-foreground">
-            Gerencie as aulas da Escola Biblica
+            Gerencie as aulas da Escola Bíblica
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -92,11 +92,11 @@ export default function AulasPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="title">Titulo</Label>
+                <Label htmlFor="title">Título</Label>
                 <Input id="title" name="title" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Descricao</Label>
+                <Label htmlFor="description">Descrição</Label>
                 <Textarea id="description" name="description" />
               </div>
               <div className="space-y-2">
@@ -120,10 +120,10 @@ export default function AulasPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Semana</TableHead>
-              <TableHead>Titulo</TableHead>
+              <TableHead>Título</TableHead>
               <TableHead>Data</TableHead>
               <TableHead>Check-in</TableHead>
-              <TableHead className="text-right">Acoes</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

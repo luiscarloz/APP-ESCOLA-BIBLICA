@@ -96,7 +96,7 @@ export default async function AlunosPage() {
         <h1 className="text-3xl font-extrabold tracking-tight">Alunos</h1>
         <p className="mt-1 text-muted-foreground">
           {students.length} aluno{students.length !== 1 ? "s" : ""} cadastrado
-          {students.length !== 1 ? "s" : ""} — agrupados por 1a preferencia
+          {students.length !== 1 ? "s" : ""} — agrupados por 1a preferência
         </p>
       </div>
 
@@ -123,7 +123,7 @@ export default async function AlunosPage() {
               <CardContent>
                 <div className="text-3xl font-extrabold">{count}</div>
                 <p className="text-xs text-muted-foreground">
-                  1a opcao
+                  1a opção
                 </p>
               </CardContent>
             </Card>
@@ -154,7 +154,7 @@ export default async function AlunosPage() {
             <CardContent>
               {trackStudents.length === 0 ? (
                 <p className="py-4 text-center text-sm text-muted-foreground">
-                  Nenhum aluno com esta 1a opcao ainda.
+                  Nenhum aluno com esta 1a opção ainda.
                 </p>
               ) : (
                 <Table>
@@ -162,8 +162,8 @@ export default async function AlunosPage() {
                     <TableRow>
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Preferencias</TableHead>
-                      <TableHead>Presencas</TableHead>
+                      <TableHead>Preferências</TableHead>
+                      <TableHead>Presenças</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -193,7 +193,7 @@ export default async function AlunosPage() {
                               </div>
                             ) : (
                               <span className="text-xs text-muted-foreground">
-                                Nao definidas
+                                Não definidas
                               </span>
                             )}
                           </TableCell>
@@ -221,7 +221,7 @@ export default async function AlunosPage() {
               <div className="rounded-lg bg-muted p-1.5">
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
-              Sem preferencias
+              Sem preferências
               <Badge variant="secondary" className="ml-auto">
                 {noPrefs.length}
               </Badge>

@@ -18,9 +18,9 @@ export default async function NoticiasPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Noticias</h1>
+        <h1 className="text-2xl font-bold">Notícias</h1>
         <p className="text-muted-foreground">
-          Fique por dentro das novidades da Escola Biblica.
+          Fique por dentro das novidades da Escola Bíblica.
         </p>
       </div>
 
@@ -40,7 +40,7 @@ export default async function NoticiasPage() {
         <div className="flex flex-col items-center justify-center gap-4 py-20">
           <Newspaper className="h-12 w-12 text-muted-foreground" />
           <p className="text-muted-foreground">
-            Nenhuma noticia publicada ainda.
+            Nenhuma notícia publicada ainda.
           </p>
         </div>
       )}

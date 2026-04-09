@@ -26,11 +26,11 @@ export function CertificateDownload({
         <Award className="mx-auto h-16 w-16 text-primary" />
 
         <h2 className="mt-6 text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Certificado de Conclusao
+          Certificado de Conclusão
         </h2>
 
         <h3 className="mt-2 text-lg font-semibold text-muted-foreground">
-          Escola Biblica
+          Escola Bíblica
         </h3>
 
         <p className="mt-6 text-sm text-muted-foreground">
@@ -42,8 +42,8 @@ export function CertificateDownload({
         </p>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          concluiu com exito o curso da Escola Biblica, tendo cumprido todos os
-          requisitos de presenca e participacao.
+          concluiu com êxito o curso da Escola Bíblica, tendo cumprido todos os
+          requisitos de presença e participação.
         </p>
 
         <p className="mt-8 text-sm text-muted-foreground">
@@ -53,7 +53,7 @@ export function CertificateDownload({
         <div className="mt-8 flex justify-center">
           <div className="w-48 border-t border-muted-foreground/30 pt-2">
             <p className="text-xs text-muted-foreground">
-              Igreja Internacional da Restauracao
+              Igreja Internacional da Restauração
             </p>
           </div>
         </div>

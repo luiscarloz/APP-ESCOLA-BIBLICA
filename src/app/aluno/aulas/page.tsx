@@ -30,7 +30,7 @@ export default async function AulasPage() {
       <div className="flex flex-col items-center justify-center gap-4 py-20">
         <BookOpen className="h-12 w-12 text-muted-foreground" />
         <p className="text-muted-foreground">
-          Seu cadastro esta sendo processado.
+          Seu cadastro está sendo processado.
         </p>
       </div>
     );
@@ -59,7 +59,7 @@ export default async function AulasPage() {
       <div>
         <h1 className="text-2xl font-bold">Aulas</h1>
         <p className="text-muted-foreground">
-          Acompanhe suas aulas e presencas.
+          Acompanhe suas aulas e presenças.
         </p>
       </div>
 

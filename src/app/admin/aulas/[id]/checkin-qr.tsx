@@ -67,7 +67,7 @@ export function CheckinPasswordSection({ lesson }: { lesson: Lesson }) {
               Check-in por Senha
             </CardTitle>
             <CardDescription>
-              Defina a senha que os alunos digitam para confirmar presenca
+              Defina a senha que os alunos digitam para confirmar presença
             </CardDescription>
           </div>
           {lesson.checkin_open ? (

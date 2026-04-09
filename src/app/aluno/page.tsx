@@ -83,10 +83,10 @@ export default async function AlunoDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Ola, {student.name.split(" ")[0]}!
+          Olá, {student.name.split(" ")[0]}!
         </h1>
         <p className="mt-1 text-muted-foreground">
-          Bem-vindo a sua area do aluno.
+          Bem-vindo à sua área do aluno.
         </p>
       </div>
 
@@ -103,7 +103,7 @@ export default async function AlunoDashboard() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-white/80">
-                    Sua 1a opcao
+                    Sua 1a opção
                   </p>
                   <CardTitle className="text-2xl text-white">
                     {firstChoice.course_tracks.name}
@@ -147,7 +147,7 @@ export default async function AlunoDashboard() {
           <div className="absolute top-0 right-0 h-24 w-24 translate-x-6 -translate-y-6 rounded-full bg-primary/10" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Presencas
+              Presenças
             </CardTitle>
             <CalendarDays className="h-4 w-4 text-primary" />
           </CardHeader>
@@ -172,7 +172,7 @@ export default async function AlunoDashboard() {
           </CardHeader>
           <CardContent>
             <p className="mb-3 text-sm text-muted-foreground">
-              Escaneie o QR Code durante a aula para registrar presenca.
+              Escaneie o QR Code durante a aula para registrar presença.
             </p>
             <Link
               href="/aluno/checkin"
@@ -189,7 +189,7 @@ export default async function AlunoDashboard() {
       {recentNews.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Ultimas Noticias</h2>
+            <h2 className="text-xl font-bold">Últimas Notícias</h2>
             <Link
               href="/aluno/noticias"
               className="text-sm font-medium text-primary hover:underline"

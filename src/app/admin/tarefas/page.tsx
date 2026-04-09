@@ -62,7 +62,7 @@ export default function TarefasPage() {
         <div>
           <h1 className="text-3xl font-bold">Tarefas</h1>
           <p className="text-muted-foreground">
-            Gerencie as tarefas da Escola Biblica
+            Gerencie as tarefas da Escola Bíblica
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -81,11 +81,11 @@ export default function TarefasPage() {
             </DialogHeader>
             <form action={handleCreate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Titulo</Label>
+                <Label htmlFor="title">Título</Label>
                 <Input id="title" name="title" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Descricao</Label>
+                <Label htmlFor="description">Descrição</Label>
                 <Textarea id="description" name="description" />
               </div>
               <div className="space-y-2">
@@ -112,10 +112,10 @@ export default function TarefasPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Titulo</TableHead>
+              <TableHead>Título</TableHead>
               <TableHead>Data de Entrega</TableHead>
               <TableHead>Aula</TableHead>
-              <TableHead className="text-right">Acoes</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -31,7 +31,7 @@ export default async function TarefasPage() {
       <div className="flex flex-col items-center justify-center gap-4 py-20">
         <ClipboardList className="h-12 w-12 text-muted-foreground" />
         <p className="text-muted-foreground">
-          Seu cadastro esta sendo processado.
+          Seu cadastro está sendo processado.
         </p>
       </div>
     );
@@ -106,7 +106,7 @@ export default async function TarefasPage() {
 
         {taskList.length === 0 && (
           <p className="text-center text-muted-foreground py-10">
-            Nenhuma tarefa disponivel ainda.
+            Nenhuma tarefa disponível ainda.
           </p>
         )}
       </div>

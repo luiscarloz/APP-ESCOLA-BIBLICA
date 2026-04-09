@@ -33,10 +33,10 @@ export default async function AdminDashboardPage() {
     return {
       name: track.name,
       color: track.color || "violet",
-      "1a Opcao": counts.p1,
-      "2a Opcao": counts.p2,
-      "3a Opcao": counts.p3,
-      "4a Opcao": counts.p4,
+      "1a Opção": counts.p1,
+      "2a Opção": counts.p2,
+      "3a Opção": counts.p3,
+      "4a Opção": counts.p4,
     };
   });
 
@@ -73,7 +73,7 @@ export default async function AdminDashboardPage() {
       bg: "bg-chart-3/10",
     },
     {
-      title: "Presencas",
+      title: "Presenças",
       value: attendancesRes.count ?? 0,
       desc: "check-ins",
       icon: CalendarDays,
@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight">Dashboard</h1>
         <p className="mt-1 text-muted-foreground">
-          Visao geral da Escola Biblica
+          Visão geral da Escola Bíblica
         </p>
       </div>
 

@@ -7,10 +7,10 @@ export default function CheckinPage() {
     <div className="flex flex-col items-center gap-8 py-8">
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Check-in de Presenca
+          Check-in de Presença
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Digite a senha exibida pelo professor para registrar sua presenca.
+          Digite a senha exibida pelo professor para registrar sua presença.
         </p>
       </div>
 

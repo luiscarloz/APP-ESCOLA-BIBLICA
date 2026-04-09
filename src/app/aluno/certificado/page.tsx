@@ -33,7 +33,7 @@ export default async function CertificadoPage() {
           <Award className="h-10 w-10 text-primary" />
         </div>
         <p className="text-muted-foreground">
-          Seu cadastro esta sendo processado.
+          Seu cadastro está sendo processado.
         </p>
       </div>
     );
@@ -130,7 +130,7 @@ export default async function CertificadoPage() {
                 <div className="mb-1 flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2 font-medium">
                     <CalendarDays className="h-4 w-4 text-primary" />
-                    Presencas
+                    Presenças
                   </span>
                   <span className="font-bold text-primary">
                     {attendanceCount}/{totalLessons}
@@ -175,13 +175,13 @@ export default async function CertificadoPage() {
             {eligible ? (
               <p className="flex items-center gap-2 font-medium">
                 <CheckCircle className="h-5 w-5 text-green-600" />
-                Parabens! Voce ja pode emitir seu certificado!
+                Parabéns! Você já pode emitir seu certificado!
               </p>
             ) : (
               <p className="text-sm">
-                Voce precisa de pelo menos <strong>10 presencas</strong> para
+                Você precisa de pelo menos <strong>10 presenças</strong> para
                 emitir o certificado. Faltam{" "}
-                <strong>{Math.max(0, 10 - attendanceCount)}</strong> presenca
+                <strong>{Math.max(0, 10 - attendanceCount)}</strong> presença
                 {10 - attendanceCount !== 1 ? "s" : ""}.
               </p>
             )}

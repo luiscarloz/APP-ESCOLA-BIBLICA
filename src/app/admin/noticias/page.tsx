@@ -32,7 +32,7 @@ export default function NoticiasPage() {
   }, []);
 
   async function handleDelete(id: string) {
-    if (!confirm("Tem certeza que deseja excluir esta noticia?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta notícia?")) return;
     await deleteNews(id);
     fetchNews();
   }
@@ -41,15 +41,15 @@ export default function NoticiasPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Noticias</h1>
+          <h1 className="text-3xl font-bold">Notícias</h1>
           <p className="text-muted-foreground">
-            Gerencie as noticias da Escola Biblica
+            Gerencie as notícias da Escola Bíblica
           </p>
         </div>
         <Link href="/admin/noticias/nova">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Nova Noticia
+            Nova Notícia
           </Button>
         </Link>
       </div>
@@ -57,7 +57,7 @@ export default function NoticiasPage() {
       {loading ? (
         <p className="text-muted-foreground">Carregando...</p>
       ) : news.length === 0 ? (
-        <p className="text-muted-foreground">Nenhuma noticia cadastrada.</p>
+        <p className="text-muted-foreground">Nenhuma notícia cadastrada.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {news.map((item) => (

@@ -69,7 +69,7 @@ export default async function TarefaDetailPage({
       {typedTask.description && (
         <Card>
           <CardHeader>
-            <CardTitle>Descricao</CardTitle>
+            <CardTitle>Descrição</CardTitle>
           </CardHeader>
           <CardContent>
             <p>{typedTask.description}</p>
@@ -95,7 +95,7 @@ export default async function TarefaDetailPage({
                 <TableRow>
                   <TableHead>Aluno</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Conteudo</TableHead>
+                  <TableHead>Conteúdo</TableHead>
                   <TableHead>Arquivo</TableHead>
                   <TableHead>Data</TableHead>
                 </TableRow>

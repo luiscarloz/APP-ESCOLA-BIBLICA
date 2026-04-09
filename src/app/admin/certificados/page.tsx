@@ -51,7 +51,7 @@ export default async function CertificadosPage() {
       <div>
         <h1 className="text-3xl font-bold">Certificados</h1>
         <p className="text-muted-foreground">
-          Alunos elegiveis para certificado ({MINIMUM_ATTENDANCES}+ presencas de{" "}
+          Alunos elegíveis para certificado ({MINIMUM_ATTENDANCES}+ presenças de{" "}
           {TOTAL_LESSONS} aulas)
         </p>
       </div>
@@ -61,9 +61,9 @@ export default async function CertificadosPage() {
           <div className="flex items-center gap-2">
             <Award className="h-5 w-5" />
             <div>
-              <CardTitle>Alunos Elegiveis</CardTitle>
+              <CardTitle>Alunos Elegíveis</CardTitle>
               <CardDescription>
-                {eligibleStudents.length} aluno(s) elegivel(is) para certificado
+                {eligibleStudents.length} aluno(s) elegível(is) para certificado
               </CardDescription>
             </div>
           </div>
@@ -71,7 +71,7 @@ export default async function CertificadosPage() {
         <CardContent>
           {eligibleStudents.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nenhum aluno atingiu o minimo de {MINIMUM_ATTENDANCES} presencas
+              Nenhum aluno atingiu o mínimo de {MINIMUM_ATTENDANCES} presenças
               ainda.
             </p>
           ) : (
@@ -80,7 +80,7 @@ export default async function CertificadosPage() {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Presencas</TableHead>
+                  <TableHead>Presenças</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -102,7 +102,7 @@ export default async function CertificadosPage() {
                         {count >= TOTAL_LESSONS ? (
                           <Badge>Completo</Badge>
                         ) : (
-                          <Badge variant="secondary">Elegivel</Badge>
+                          <Badge variant="secondary">Elegível</Badge>
                         )}
                       </TableCell>
                     </TableRow>
