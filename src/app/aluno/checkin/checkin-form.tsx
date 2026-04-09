@@ -110,7 +110,7 @@ export function CheckinForm() {
                 Verificando...
               </>
             ) : (
-              "Confirmar Presenca"
+              "Confirmar Presença"
             )}
           </Button>
         </form>

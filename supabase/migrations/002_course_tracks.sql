@@ -26,9 +26,9 @@ ALTER TABLE students ADD COLUMN can_change_preferences boolean DEFAULT true;
 -- Inserir os 4 tracks
 INSERT INTO course_tracks (name, description, icon, color) VALUES
   ('Trindade', 'Estudo aprofundado sobre a doutrina da Trindade', 'triangle', 'violet'),
-  ('Cosmovisao Biblica', 'Entendendo o mundo atraves da perspectiva biblica', 'globe', 'blue'),
-  ('Introducao Biblica', 'Fundamentos e panorama geral da Biblia', 'book-open', 'emerald'),
-  ('Historia da Igreja', 'A trajetoria da igreja ao longo dos seculos', 'landmark', 'amber');
+  ('Cosmovisão Bíblica', 'Entendendo o mundo através da perspectiva bíblica', 'globe', 'blue'),
+  ('Introdução Bíblica', 'Fundamentos e panorama geral da Bíblia', 'book-open', 'emerald'),
+  ('História da Igreja', 'A trajetória da igreja ao longo dos séculos', 'landmark', 'amber');
 
 -- RLS
 ALTER TABLE course_tracks ENABLE ROW LEVEL SECURITY;
