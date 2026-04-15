@@ -97,7 +97,7 @@ export async function performCheckin(lessonId: string, password: string) {
   // Find the lesson and validate password
   const { data: lesson } = await supabase
     .from("lessons")
-    .select("id, title, track_id, checkin_password, checkin_open, course_tracks(turma)")
+    .select("id, title, track_id, checkin_password, checkin_open, course_tracks(name, turma)")
     .eq("id", lessonId)
     .single();
 
@@ -123,11 +123,19 @@ export async function performCheckin(lessonId: string, password: string) {
 
   const studentTurma = (pref as any)?.course_tracks?.turma;
   const lessonTurma = (lesson as any)?.course_tracks?.turma;
+  const lessonTrackName = (lesson as any)?.course_tracks?.name;
 
   if (studentTurma && lessonTurma && studentTurma !== lessonTurma) {
+    // Get student's turma track names
+    const { data: turmaTracksData } = await supabase
+      .from("course_tracks")
+      .select("name")
+      .eq("turma", studentTurma);
+    const turmaNames = (turmaTracksData ?? []).map((t: { name: string }) => t.name).join(" e ");
+
     return {
       success: false,
-      message: "Esta aula não é da sua turma.",
+      message: `Esta aula é de ${lessonTrackName} e não faz parte da sua turma. Sua turma é a Turma ${studentTurma} (${turmaNames}).`,
     };
   }
 
