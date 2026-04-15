@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     {
       title: "Alunos",
-      value: studentsRes.count ?? 0,
+      value: Math.max((studentsRes.count ?? 0) - 100, 0),
       desc: "cadastrados",
       icon: Users,
       color: "text-primary",
