@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
 import type { Lesson, Student } from "@/lib/types";
 import { CheckinPasswordSection } from "./checkin-qr";
+import { MaterialForm } from "./material-form";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +87,10 @@ export default async function AulaDetailPage({
       <Separator />
 
       <CheckinPasswordSection lesson={typedLesson} />
+
+      <Separator />
+
+      <MaterialForm lesson={typedLesson} />
 
       <Separator />
 

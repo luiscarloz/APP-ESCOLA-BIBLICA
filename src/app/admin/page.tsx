@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, BookOpen, ClipboardList, CalendarDays } from "lucide-react";
+import { Users, BookOpen, ClipboardList, CalendarDays, GraduationCap } from "lucide-react";
 import type { CourseTrack } from "@/lib/types";
 import { PreferenceCharts } from "./preference-charts";
 
@@ -16,11 +16,23 @@ export default async function AdminDashboardPage() {
       supabase.from("tasks").select("id", { count: "exact", head: true }),
       supabase.from("attendances").select("id", { count: "exact", head: true }),
       supabase.from("course_tracks").select("*").order("created_at"),
-      supabase.from("student_track_preferences").select("track_id, priority"),
+      supabase.from("student_track_preferences").select("student_id, track_id, priority"),
     ]);
 
   const tracks = (tracksRes.data ?? []) as CourseTrack[];
-  const prefs = (prefsRes.data ?? []) as { track_id: string; priority: number }[];
+  const prefs = (prefsRes.data ?? []) as { student_id: string; track_id: string; priority: number }[];
+
+  // Build turma counts: group students by turma based on 1st preference
+  const trackTurmaMap = new Map(tracks.map((t) => [t.id, t.turma]));
+  const firstPrefs = prefs.filter((p) => p.priority === 1);
+  // Use a Set to count unique students per turma
+  const turma1Students = new Set<string>();
+  const turma2Students = new Set<string>();
+  firstPrefs.forEach((p) => {
+    const turma = trackTurmaMap.get(p.track_id);
+    if (turma === 1) turma1Students.add(p.student_id);
+    else if (turma === 2) turma2Students.add(p.student_id);
+  });
 
   // Build chart data: for each priority level, count per track
   const chartData = tracks.map((track) => {
@@ -89,6 +101,45 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-muted-foreground">
           Visão geral da Escola Bíblica
         </p>
+      </div>
+
+      {/* Turma counts */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[
+          {
+            title: "Turma 1",
+            desc: "Trindade + Cosmovisão Bíblica",
+            count: turma1Students.size,
+            color: "text-violet-700",
+            bg: "bg-violet-50",
+          },
+          {
+            title: "Turma 2",
+            desc: "Introdução Bíblica + História da Igreja",
+            count: turma2Students.size,
+            color: "text-blue-700",
+            bg: "bg-blue-50",
+          },
+        ].map((turma) => (
+          <Card
+            key={turma.title}
+            className="relative overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/5"
+          >
+            <div className="absolute top-0 right-0 h-20 w-20 translate-x-4 -translate-y-4 rounded-full bg-primary/5" />
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {turma.title}
+              </CardTitle>
+              <div className={`rounded-lg p-2 ${turma.bg}`}>
+                <GraduationCap className={`h-4 w-4 ${turma.color}`} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-extrabold">{turma.count}</div>
+              <p className="mt-1 text-xs text-muted-foreground">{turma.desc}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

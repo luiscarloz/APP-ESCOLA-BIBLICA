@@ -4,6 +4,7 @@ export interface CourseTrack {
   description: string | null;
   icon: string | null;
   color: string | null;
+  turma: number | null;
   created_at: string;
 }
 
@@ -44,7 +45,14 @@ export interface Lesson {
   checkin_expires_at: string | null;
   checkin_password: string | null;
   checkin_open: boolean;
+  track_id: string | null;
+  material_url: string | null;
+  material_title: string | null;
   created_at: string;
+}
+
+export interface LessonWithTrack extends Lesson {
+  course_tracks: Pick<CourseTrack, "name" | "color" | "icon" | "turma"> | null;
 }
 
 export interface Attendance {

@@ -19,11 +19,13 @@ export async function createLesson(formData: FormData) {
   await requireAdmin();
   const supabase = createAdminClient();
 
+  const trackId = formData.get("track_id") as string;
   const { error } = await supabase.from("lessons").insert({
     week_number: Number(formData.get("week_number")),
     title: formData.get("title") as string,
     description: (formData.get("description") as string) || null,
     date: formData.get("date") as string,
+    track_id: trackId || null,
   });
 
   if (error) throw new Error(error.message);
@@ -34,6 +36,7 @@ export async function updateLesson(id: string, formData: FormData) {
   await requireAdmin();
   const supabase = createAdminClient();
 
+  const trackId = formData.get("track_id") as string;
   const { error } = await supabase
     .from("lessons")
     .update({
@@ -41,11 +44,28 @@ export async function updateLesson(id: string, formData: FormData) {
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       date: formData.get("date") as string,
+      track_id: trackId || null,
     })
     .eq("id", id);
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/aulas");
+}
+
+export async function updateLessonMaterial(id: string, materialUrl: string, materialTitle: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("lessons")
+    .update({
+      material_url: materialUrl || null,
+      material_title: materialTitle || null,
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/aulas/${id}`);
 }
 
 export async function deleteLesson(id: string) {

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Triangle, Globe, BookOpen, Landmark, Users } from "lucide-react";
+import { Triangle, Globe, BookOpen, Landmark, Users, GraduationCap } from "lucide-react";
 import type { CourseTrack, Student } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +81,26 @@ export default async function AlunosPage() {
   // Track name lookup
   const trackMap = new Map(tracks.map((t) => [t.id, t]));
 
+  // Turma counts based on 1st preference
+  const turma1Count = students.filter((s) => {
+    const firstTrackId = studentPrefs.get(s.id)?.[0];
+    if (!firstTrackId) return false;
+    return trackMap.get(firstTrackId)?.turma === 1;
+  }).length;
+
+  const turma2Count = students.filter((s) => {
+    const firstTrackId = studentPrefs.get(s.id)?.[0];
+    if (!firstTrackId) return false;
+    return trackMap.get(firstTrackId)?.turma === 2;
+  }).length;
+
+  // Student turma lookup
+  function getStudentTurma(studentId: string): number | null {
+    const firstTrackId = studentPrefs.get(studentId)?.[0];
+    if (!firstTrackId) return null;
+    return trackMap.get(firstTrackId)?.turma ?? null;
+  }
+
   function getStudentPrefsDisplay(studentId: string) {
     const order = studentPrefs.get(studentId);
     if (!order) return null;
@@ -98,6 +118,42 @@ export default async function AlunosPage() {
           {students.length} aluno{students.length !== 1 ? "s" : ""} cadastrado
           {students.length !== 1 ? "s" : ""} — agrupados por 1a preferência
         </p>
+      </div>
+
+      {/* Turma summary */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[
+          {
+            title: "Turma 1",
+            desc: "Trindade + Cosmovisão Bíblica",
+            count: turma1Count,
+            color: "text-violet-700",
+            bg: "bg-violet-50",
+          },
+          {
+            title: "Turma 2",
+            desc: "Introdução Bíblica + História da Igreja",
+            count: turma2Count,
+            color: "text-blue-700",
+            bg: "bg-blue-50",
+          },
+        ].map((turma) => (
+          <Card key={turma.title} className="relative overflow-hidden">
+            <div className="absolute top-0 right-0 h-16 w-16 translate-x-4 -translate-y-4 rounded-full bg-primary/5" />
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {turma.title}
+              </CardTitle>
+              <div className={`rounded-lg p-1.5 ${turma.bg}`}>
+                <GraduationCap className={`h-4 w-4 ${turma.color}`} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-extrabold">{turma.count}</div>
+              <p className="text-xs text-muted-foreground">{turma.desc}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Summary cards */}
@@ -162,6 +218,7 @@ export default async function AlunosPage() {
                     <TableRow>
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Turma</TableHead>
                       <TableHead>Preferências</TableHead>
                       <TableHead>Presenças</TableHead>
                     </TableRow>
@@ -175,6 +232,16 @@ export default async function AlunosPage() {
                             {student.name}
                           </TableCell>
                           <TableCell>{student.email}</TableCell>
+                          <TableCell>
+                            {(() => {
+                              const turma = getStudentTurma(student.id);
+                              return turma ? (
+                                <Badge variant="outline">Turma {turma}</Badge>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              );
+                            })()}
+                          </TableCell>
                           <TableCell>
                             {prefsDisplay ? (
                               <div className="flex flex-wrap gap-1">

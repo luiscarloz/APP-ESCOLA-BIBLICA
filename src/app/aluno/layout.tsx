@@ -5,14 +5,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import {
-  BookOpen,
   Home,
   CalendarDays,
-  ClipboardList,
   Newspaper,
   QrCode,
   Award,
-  GraduationCap,
   Menu,
   X,
 } from "lucide-react";
@@ -22,9 +19,7 @@ import { useState } from "react";
 
 const navItems = [
   { href: "/aluno", label: "Início", icon: Home },
-  { href: "/aluno/escolher-aula", label: "Minha Aula", icon: GraduationCap },
   { href: "/aluno/aulas", label: "Aulas", icon: CalendarDays },
-  { href: "/aluno/tarefas", label: "Tarefas", icon: ClipboardList },
   { href: "/aluno/noticias", label: "Notícias", icon: Newspaper },
   { href: "/aluno/checkin", label: "Check-in", icon: QrCode },
   { href: "/aluno/certificado", label: "Certificado", icon: Award },

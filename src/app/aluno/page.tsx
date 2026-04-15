@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   CalendarDays,
@@ -16,6 +17,7 @@ import { NewsCard } from "@/components/news-card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getOrCreateStudentServer } from "@/lib/get-student";
+import { getStudentTurma, getTurmaTrackIds } from "@/lib/get-turma";
 import type { News, CourseTrack } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +36,13 @@ const colorMap: Record<string, string> = {
   amber: "from-amber-500 to-amber-600",
 };
 
+const badgeColorMap: Record<string, string> = {
+  violet: "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-300",
+  blue: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  emerald: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+  amber: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+};
+
 export default async function AlunoDashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
@@ -48,12 +57,21 @@ export default async function AlunoDashboard() {
 
   const supabase = createAdminClient();
 
-  const [prefsRes, newsRes, attendancesRes] = await Promise.all([
-    supabase
-      .from("student_track_preferences")
-      .select("priority, track_id, course_tracks(name, color, icon)")
-      .eq("student_id", student.id)
-      .order("priority"),
+  // Get turma info
+  const turma = await getStudentTurma(student.id);
+  const turmaTrackIds = turma ? await getTurmaTrackIds(turma) : [];
+
+  // Get turma tracks details
+  const turmaTracksRes = turmaTrackIds.length > 0
+    ? await supabase
+        .from("course_tracks")
+        .select("id, name, color, icon")
+        .in("id", turmaTrackIds)
+    : { data: [] };
+
+  const turmaTracks = (turmaTracksRes.data ?? []) as Pick<CourseTrack, "id" | "name" | "color" | "icon">[];
+
+  const [newsRes, attendancesRes] = await Promise.all([
     supabase
       .from("news")
       .select("*")
@@ -62,22 +80,12 @@ export default async function AlunoDashboard() {
     supabase.from("attendances").select("id").eq("student_id", student.id),
   ]);
 
-  const preferences = ((prefsRes.data ?? []) as unknown as {
-    priority: number;
-    track_id: string;
-    course_tracks: Pick<CourseTrack, "name" | "color" | "icon">;
-  }[]);
   const recentNews = (newsRes.data as News[] | null) ?? [];
   const attendanceCount = attendancesRes.data?.length ?? 0;
   const progressPercent = Math.round((attendanceCount / 12) * 100);
 
-  const firstChoice = preferences[0];
-  const FirstIcon = firstChoice
-    ? iconMap[firstChoice.course_tracks?.icon || "book-open"] || BookOpen
-    : BookOpen;
-  const gradient = firstChoice
-    ? colorMap[firstChoice.course_tracks?.color || "violet"] || colorMap.violet
-    : colorMap.violet;
+  // Gradient based on turma
+  const gradient = turma === 1 ? colorMap.violet : turma === 2 ? colorMap.emerald : colorMap.violet;
 
   return (
     <div className="space-y-8">
@@ -90,49 +98,35 @@ export default async function AlunoDashboard() {
         </p>
       </div>
 
-      {/* First choice highlight card */}
-      {firstChoice && (
+      {/* Turma highlight card */}
+      {turma && (
         <Card className="relative overflow-hidden border-0 text-white">
           <div className={cn("absolute inset-0 bg-gradient-to-br", gradient)} />
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_20%,white_0%,transparent_60%)]" />
           <CardHeader className="relative">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-                  <FirstIcon className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white/80">
-                    Sua 1a opção
-                  </p>
-                  <CardTitle className="text-2xl text-white">
-                    {firstChoice.course_tracks.name}
-                  </CardTitle>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                <BookOpen className="h-6 w-6" />
               </div>
-              {student.can_change_preferences && (
-                <Link
-                  href="/aluno/escolher-aula"
-                  className="rounded-lg bg-white/20 px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-colors hover:bg-white/30"
-                >
-                  Alterar
-                </Link>
-              )}
+              <div>
+                <p className="text-sm font-medium text-white/80">Sua Turma</p>
+                <CardTitle className="text-2xl text-white">
+                  Turma {turma}
+                </CardTitle>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="relative">
             <div className="flex flex-wrap gap-2">
-              {preferences.slice(1).map((pref, i) => {
-                const PrefIcon =
-                  iconMap[pref.course_tracks?.icon || "book-open"] || BookOpen;
+              {turmaTracks.map((track) => {
+                const TrackIcon = iconMap[track.icon || "book-open"] || BookOpen;
                 return (
                   <div
-                    key={pref.track_id}
-                    className="flex items-center gap-1.5 rounded-lg bg-white/15 px-2.5 py-1 text-xs backdrop-blur-sm"
+                    key={track.id}
+                    className="flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-sm backdrop-blur-sm"
                   >
-                    <span className="font-bold">{i + 2}a</span>
-                    <PrefIcon className="h-3 w-3 shrink-0" />
-                    <span className="truncate">{pref.course_tracks.name}</span>
+                    <TrackIcon className="h-4 w-4 shrink-0" />
+                    <span>{track.name}</span>
                   </div>
                 );
               })}

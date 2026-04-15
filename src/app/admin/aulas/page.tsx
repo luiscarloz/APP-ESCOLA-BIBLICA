@@ -23,14 +23,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Eye } from "lucide-react";
-import type { Lesson } from "@/lib/types";
+import type { LessonWithTrack, CourseTrack } from "@/lib/types";
 
 export default function AulasPage() {
-  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [lessons, setLessons] = useState<LessonWithTrack[]>([]);
+  const [tracks, setTracks] = useState<CourseTrack[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
 
   async function fetchLessons() {
     const res = await fetch("/api/admin/lessons");
@@ -41,13 +50,26 @@ export default function AulasPage() {
     setLoading(false);
   }
 
+  async function fetchTracks() {
+    const res = await fetch("/api/admin/tracks");
+    if (res.ok) {
+      const data = await res.json();
+      setTracks(data);
+    }
+  }
+
   useEffect(() => {
     fetchLessons();
+    fetchTracks();
   }, []);
 
   async function handleCreate(formData: FormData) {
+    if (selectedTrackId) {
+      formData.set("track_id", selectedTrackId);
+    }
     await createLesson(formData);
     setOpen(false);
+    setSelectedTrackId(null);
     fetchLessons();
   }
 
@@ -103,6 +125,24 @@ export default function AulasPage() {
                 <Label htmlFor="date">Data</Label>
                 <Input id="date" name="date" type="date" required />
               </div>
+              <div className="space-y-2">
+                <Label>Matéria</Label>
+                <Select
+                  value={selectedTrackId ?? undefined}
+                  onValueChange={(val) => setSelectedTrackId(val || null)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione a matéria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tracks.map((track) => (
+                      <SelectItem key={track.id} value={track.id}>
+                        {track.name}{track.turma ? ` (Turma ${track.turma})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <Button type="submit" className="w-full">
                 Criar Aula
               </Button>
@@ -121,6 +161,7 @@ export default function AulasPage() {
             <TableRow>
               <TableHead>Semana</TableHead>
               <TableHead>Título</TableHead>
+              <TableHead>Matéria</TableHead>
               <TableHead>Data</TableHead>
               <TableHead>Check-in</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -133,6 +174,15 @@ export default function AulasPage() {
                   <Badge variant="outline">{lesson.week_number}</Badge>
                 </TableCell>
                 <TableCell className="font-medium">{lesson.title}</TableCell>
+                <TableCell>
+                  {lesson.course_tracks ? (
+                    <Badge variant="outline">
+                      {lesson.course_tracks.name}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
+                </TableCell>
                 <TableCell>{lesson.date}</TableCell>
                 <TableCell>
                   {lesson.checkin_token ? (

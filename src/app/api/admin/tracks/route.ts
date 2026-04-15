@@ -12,9 +12,9 @@ export async function GET() {
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
-    .from("lessons")
-    .select("*, course_tracks(name, color, icon, turma)")
-    .order("week_number");
+    .from("course_tracks")
+    .select("*")
+    .order("created_at");
 
   if (error) return NextResponse.json([], { status: 500 });
   return NextResponse.json(data);
