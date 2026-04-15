@@ -90,22 +90,44 @@ export async function savePreferences(trackIds: string[]) {
   return { success: true, message: "Preferências salvas com sucesso!" };
 }
 
-export async function performCheckin(password: string) {
+export async function performCheckin(lessonId: string, password: string) {
   const student = await getOrCreateStudent();
   const supabase = createAdminClient();
 
-  // Find open lesson with matching password
+  // Find the lesson and validate password
   const { data: lesson } = await supabase
     .from("lessons")
-    .select("id, title")
-    .eq("checkin_password", password.toUpperCase().trim())
-    .eq("checkin_open", true)
+    .select("id, title, track_id, checkin_password, checkin_open, course_tracks(turma)")
+    .eq("id", lessonId)
     .single();
 
   if (!lesson) {
+    return { success: false, message: "Aula não encontrada." };
+  }
+
+  if (!lesson.checkin_open) {
+    return { success: false, message: "O check-in desta aula está fechado." };
+  }
+
+  if (lesson.checkin_password?.toUpperCase() !== password.toUpperCase().trim()) {
+    return { success: false, message: "Senha incorreta." };
+  }
+
+  // Validate turma — student can only check in to lessons of their turma
+  const { data: pref } = await supabase
+    .from("student_track_preferences")
+    .select("track_id, course_tracks(turma)")
+    .eq("student_id", student.id)
+    .eq("priority", 1)
+    .single();
+
+  const studentTurma = (pref as any)?.course_tracks?.turma;
+  const lessonTurma = (lesson as any)?.course_tracks?.turma;
+
+  if (studentTurma && lessonTurma && studentTurma !== lessonTurma) {
     return {
       success: false,
-      message: "Senha incorreta ou check-in fechado para esta aula.",
+      message: "Esta aula não é da sua turma.",
     };
   }
 
@@ -134,6 +156,7 @@ export async function performCheckin(password: string) {
   }
 
   revalidatePath("/aluno");
+  revalidatePath("/aluno/aulas");
   return { success: true, message: `Check-in realizado! Aula: ${lesson.title}` };
 }
 
