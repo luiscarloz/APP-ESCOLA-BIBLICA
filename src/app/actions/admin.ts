@@ -130,9 +130,8 @@ export async function createTask(formData: FormData) {
   await requireAdmin();
   const supabase = createAdminClient();
 
-  const lessonId = formData.get("lesson_id") as string;
   const { error } = await supabase.from("tasks").insert({
-    lesson_id: lessonId || null,
+    lesson_id: null,
     title: formData.get("title") as string,
     description: (formData.get("description") as string) || null,
     due_date: (formData.get("due_date") as string) || null,
@@ -146,11 +145,10 @@ export async function updateTask(id: string, formData: FormData) {
   await requireAdmin();
   const supabase = createAdminClient();
 
-  const lessonId = formData.get("lesson_id") as string;
   const { error } = await supabase
     .from("tasks")
     .update({
-      lesson_id: lessonId || null,
+      lesson_id: null,
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       due_date: (formData.get("due_date") as string) || null,

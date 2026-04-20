@@ -1,20 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createLesson, deleteLesson } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -31,10 +24,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Eye } from "lucide-react";
+import { Plus, Trash2, ChevronRight } from "lucide-react";
 import type { LessonWithTrack, CourseTrack } from "@/lib/types";
 
+const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+  violet: { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200" },
+  blue: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
+  emerald: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  amber: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+};
+
 export default function AulasPage() {
+  const router = useRouter();
   const [lessons, setLessons] = useState<LessonWithTrack[]>([]);
   const [tracks, setTracks] = useState<CourseTrack[]>([]);
   const [open, setOpen] = useState(false);
@@ -156,61 +157,57 @@ export default function AulasPage() {
       ) : lessons.length === 0 ? (
         <p className="text-muted-foreground">Nenhuma aula cadastrada.</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Semana</TableHead>
-              <TableHead>Título</TableHead>
-              <TableHead>Matéria</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Check-in</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {lessons.map((lesson) => (
-              <TableRow key={lesson.id}>
-                <TableCell>
-                  <Badge variant="outline">{lesson.week_number}</Badge>
-                </TableCell>
-                <TableCell className="font-medium">{lesson.title}</TableCell>
-                <TableCell>
-                  {lesson.course_tracks ? (
-                    <Badge variant="outline">
-                      {lesson.course_tracks.name}
-                    </Badge>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-                <TableCell>{lesson.date}</TableCell>
-                <TableCell>
-                  {lesson.checkin_token ? (
-                    <Badge>Aberto</Badge>
-                  ) : (
-                    <Badge variant="secondary">Fechado</Badge>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Link href={`/admin/aulas/${lesson.id}`}>
-                      <Button variant="ghost" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </Link>
+        <div className="grid gap-3">
+          {lessons.map((lesson) => {
+            const trackColor = lesson.course_tracks?.color || "violet";
+            const colors = colorMap[trackColor] || colorMap.violet;
+            return (
+              <Card
+                key={lesson.id}
+                className="cursor-pointer transition-colors hover:bg-muted/50"
+                onClick={() => router.push(`/admin/aulas/${lesson.id}`)}
+              >
+                <CardContent className="flex items-center gap-4 py-4">
+                  <Badge variant="outline" className="shrink-0 text-base px-3 py-1">
+                    {lesson.week_number}
+                  </Badge>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium truncate">{lesson.title}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                      <span>{lesson.date}</span>
+                      {lesson.course_tracks && (
+                        <Badge
+                          variant="outline"
+                          className={`${colors.bg} ${colors.text} ${colors.border}`}
+                        >
+                          {lesson.course_tracks.name}
+                        </Badge>
+                      )}
+                      {lesson.checkin_token ? (
+                        <Badge>Aberto</Badge>
+                      ) : (
+                        <Badge variant="secondary">Fechado</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDelete(lesson.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(lesson.id);
+                      }}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       )}
     </div>
   );

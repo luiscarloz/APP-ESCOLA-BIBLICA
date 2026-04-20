@@ -92,10 +92,6 @@ export default function TarefasPage() {
                 <Label htmlFor="due_date">Data de Entrega</Label>
                 <Input id="due_date" name="due_date" type="date" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lesson_id">ID da Aula (opcional)</Label>
-                <Input id="lesson_id" name="lesson_id" />
-              </div>
               <Button type="submit" className="w-full">
                 Criar Tarefa
               </Button>
@@ -114,7 +110,6 @@ export default function TarefasPage() {
             <TableRow>
               <TableHead>Título</TableHead>
               <TableHead>Data de Entrega</TableHead>
-              <TableHead>Aula</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -123,7 +118,6 @@ export default function TarefasPage() {
               <TableRow key={task.id}>
                 <TableCell className="font-medium">{task.title}</TableCell>
                 <TableCell>{task.due_date ?? "Sem prazo"}</TableCell>
-                <TableCell>{task.lesson_id ?? "Avulsa"}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
                     <Link href={`/admin/tarefas/${task.id}`}>

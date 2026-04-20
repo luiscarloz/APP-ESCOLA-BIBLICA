@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getStudentTurma, getTurmaTrackIds } from "@/lib/get-turma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Award,
@@ -39,10 +40,20 @@ export default async function CertificadoPage() {
     );
   }
 
+  // Get student turma and its track IDs
+  const turma = await getStudentTurma(student.id);
+  const turmaTrackIds = turma ? await getTurmaTrackIds(turma) : [];
+
+  // Build lessons query filtered by turma tracks
+  let lessonsQuery = supabase.from("lessons").select("id, week_number, title, date, track_id").order("week_number");
+  if (turmaTrackIds.length > 0) {
+    lessonsQuery = lessonsQuery.in("track_id", turmaTrackIds);
+  }
+
   // Fetch all data in parallel
   const [lessonsRes, tasksRes, attendancesRes, submissionsRes] =
     await Promise.all([
-      supabase.from("lessons").select("id, week_number, title, date").order("week_number"),
+      lessonsQuery,
       supabase.from("tasks").select("id, title, lesson_id").order("created_at"),
       supabase
         .from("attendances")
@@ -55,9 +66,10 @@ export default async function CertificadoPage() {
     ]);
 
   const lessons = (lessonsRes.data as Pick<Lesson, "id" | "week_number" | "title" | "date">[]) ?? [];
+  const turmaLessonIds = new Set(lessons.map((l) => l.id));
   const tasks = (tasksRes.data as Pick<Task, "id" | "title" | "lesson_id">[]) ?? [];
   const attendedLessonIds = new Set(
-    (attendancesRes.data ?? []).map((a: any) => a.lesson_id)
+    (attendancesRes.data ?? []).map((a: any) => a.lesson_id).filter((id: string) => turmaLessonIds.has(id))
   );
   const submittedTaskIds = new Set(
     (submissionsRes.data ?? []).map((s: any) => s.task_id)
