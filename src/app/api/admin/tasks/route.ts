@@ -13,7 +13,7 @@ export async function GET() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("tasks")
-    .select("*")
+    .select("*, lessons(title, week_number)")
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json([], { status: 500 });

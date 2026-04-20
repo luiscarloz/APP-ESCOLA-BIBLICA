@@ -20,9 +20,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
-import type { Lesson, Student } from "@/lib/types";
+import type { Lesson, Task, Student } from "@/lib/types";
 import { CheckinPasswordSection } from "./checkin-qr";
 import { MaterialForm } from "./material-form";
+import { LessonTasks } from "./lesson-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -48,14 +49,22 @@ export default async function AulaDetailPage({
 
   if (!lesson) notFound();
 
-  const { data: attendances } = await supabase
-    .from("attendances")
-    .select("id, checked_in_at, students(name, email)")
-    .eq("lesson_id", id)
-    .order("checked_in_at", { ascending: true });
+  const [attendancesRes, tasksRes] = await Promise.all([
+    supabase
+      .from("attendances")
+      .select("id, checked_in_at, students(name, email)")
+      .eq("lesson_id", id)
+      .order("checked_in_at", { ascending: true }),
+    supabase
+      .from("tasks")
+      .select("*")
+      .eq("lesson_id", id)
+      .order("created_at"),
+  ]);
 
   const typedLesson = lesson as Lesson;
-  const typedAttendances = (attendances ?? []) as unknown as AttendanceWithStudent[];
+  const typedAttendances = (attendancesRes.data ?? []) as unknown as AttendanceWithStudent[];
+  const lessonTasks = (tasksRes.data ?? []) as Task[];
 
   return (
     <div className="space-y-6">
@@ -91,6 +100,10 @@ export default async function AulaDetailPage({
       <Separator />
 
       <MaterialForm lesson={typedLesson} />
+
+      <Separator />
+
+      <LessonTasks lessonId={id} lessonTitle={typedLesson.title} tasks={lessonTasks} />
 
       <Separator />
 
