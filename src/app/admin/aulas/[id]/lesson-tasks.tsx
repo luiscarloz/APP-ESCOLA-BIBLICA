@@ -14,11 +14,9 @@ import type { Task } from "@/lib/types";
 
 export function LessonTasks({
   lessonId,
-  lessonTitle,
   tasks,
 }: {
   lessonId: string;
-  lessonTitle: string;
   tasks: Task[];
 }) {
   const [showForm, setShowForm] = useState(false);

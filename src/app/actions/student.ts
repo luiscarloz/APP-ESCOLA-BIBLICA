@@ -4,6 +4,19 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
+type CheckinLesson = {
+  id: string;
+  title: string;
+  track_id: string | null;
+  checkin_password: string | null;
+  checkin_open: boolean;
+  course_tracks: { name: string; turma: number | null } | null;
+};
+
+type PreferenceWithTrack = {
+  course_tracks: { turma: number | null } | null;
+};
+
 export async function getOrCreateStudent() {
   const { userId } = await auth();
   if (!userId) throw new Error("Não autenticado");
@@ -101,15 +114,20 @@ export async function performCheckin(lessonId: string, password: string) {
     .eq("id", lessonId)
     .single();
 
-  if (!lesson) {
+  const checkinLesson = lesson as unknown as CheckinLesson | null;
+
+  if (!checkinLesson) {
     return { success: false, message: "Aula não encontrada." };
   }
 
-  if (!lesson.checkin_open) {
+  if (!checkinLesson.checkin_open) {
     return { success: false, message: "O check-in desta aula está fechado." };
   }
 
-  if (lesson.checkin_password?.toUpperCase() !== password.toUpperCase().trim()) {
+  if (
+    checkinLesson.checkin_password?.toUpperCase() !==
+    password.toUpperCase().trim()
+  ) {
     return { success: false, message: "Senha incorreta." };
   }
 
@@ -121,9 +139,10 @@ export async function performCheckin(lessonId: string, password: string) {
     .eq("priority", 1)
     .single();
 
-  const studentTurma = (pref as any)?.course_tracks?.turma;
-  const lessonTurma = (lesson as any)?.course_tracks?.turma;
-  const lessonTrackName = (lesson as any)?.course_tracks?.name;
+  const preference = pref as unknown as PreferenceWithTrack | null;
+  const studentTurma = preference?.course_tracks?.turma;
+  const lessonTurma = checkinLesson.course_tracks?.turma;
+  const lessonTrackName = checkinLesson.course_tracks?.name;
 
   if (studentTurma && lessonTurma && studentTurma !== lessonTurma) {
     // Get student's turma track names
@@ -144,19 +163,19 @@ export async function performCheckin(lessonId: string, password: string) {
     .from("attendances")
     .select("id")
     .eq("student_id", student.id)
-    .eq("lesson_id", lesson.id)
+    .eq("lesson_id", checkinLesson.id)
     .single();
 
   if (existing) {
     return {
       success: true,
-      message: `Você já fez check-in na aula: ${lesson.title}`,
+      message: `Você já fez check-in na aula: ${checkinLesson.title}`,
     };
   }
 
   const { error } = await supabase.from("attendances").insert({
     student_id: student.id,
-    lesson_id: lesson.id,
+    lesson_id: checkinLesson.id,
   });
 
   if (error) {
@@ -165,26 +184,43 @@ export async function performCheckin(lessonId: string, password: string) {
 
   revalidatePath("/aluno");
   revalidatePath("/aluno/aulas");
-  return { success: true, message: `Check-in realizado! Aula: ${lesson.title}` };
+  return {
+    success: true,
+    message: `Check-in realizado! Aula: ${checkinLesson.title}`,
+  };
 }
 
 export async function submitTask(taskId: string, formData: FormData) {
   const student = await getOrCreateStudent();
   const supabase = createAdminClient();
 
-  const content = formData.get("content") as string;
-  const fileUrl = (formData.get("file_url") as string) || null;
+  const content = ((formData.get("content") as string) || "").trim();
+  const fileUrl = ((formData.get("file_url") as string) || "").trim();
+
+  if (!content && !fileUrl) {
+    return {
+      success: false,
+      message: "Escreva uma resposta ou adicione um link.",
+    };
+  }
 
   const { error } = await supabase.from("task_submissions").upsert(
     {
       task_id: taskId,
       student_id: student.id,
       content: content || null,
-      file_url: fileUrl,
+      file_url: fileUrl || null,
     },
     { onConflict: "task_id,student_id" }
   );
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    return {
+      success: false,
+      message: "Erro ao enviar tarefa. Tente novamente.",
+    };
+  }
   revalidatePath("/aluno/tarefas");
+  revalidatePath("/aluno/aulas");
+  return { success: true, message: "Tarefa enviada com sucesso!" };
 }

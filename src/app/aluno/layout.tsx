@@ -7,6 +7,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   Home,
   CalendarDays,
+  ClipboardList,
   Newspaper,
   QrCode,
   Award,
@@ -20,6 +21,7 @@ import { useState } from "react";
 const navItems = [
   { href: "/aluno", label: "Início", icon: Home },
   { href: "/aluno/aulas", label: "Aulas", icon: CalendarDays },
+  { href: "/aluno/tarefas", label: "Tarefas", icon: ClipboardList },
   { href: "/aluno/noticias", label: "Notícias", icon: Newspaper },
   { href: "/aluno/checkin", label: "Check-in", icon: QrCode },
   { href: "/aluno/certificado", label: "Certificado", icon: Award },

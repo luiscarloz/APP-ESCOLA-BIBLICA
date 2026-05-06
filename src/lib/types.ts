@@ -100,4 +100,7 @@ export interface TaskSubmissionWithStudent extends TaskSubmission {
 
 export interface TaskWithSubmission extends Task {
   task_submissions?: TaskSubmission[];
+  lessons?: Pick<Lesson, "id" | "title" | "week_number" | "track_id"> & {
+    course_tracks?: Pick<CourseTrack, "name" | "color" | "icon" | "turma"> | null;
+  } | null;
 }

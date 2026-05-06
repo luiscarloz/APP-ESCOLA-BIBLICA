@@ -2,19 +2,27 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { submitTask } from "@/app/actions/student";
 
 interface TaskSubmissionFormProps {
   taskId: string;
+  compact?: boolean;
 }
 
-export function TaskSubmissionForm({ taskId }: TaskSubmissionFormProps) {
+export function TaskSubmissionForm({ taskId, compact = false }: TaskSubmissionFormProps) {
   const [state, formAction, isPending] = useActionState(
     async (_prev: { status: string; error?: string }, formData: FormData) => {
       try {
-        await submitTask(taskId, formData);
+        const result = await submitTask(taskId, formData);
+        if (!result.success) {
+          return {
+            status: "error",
+            error: result.message,
+          };
+        }
         return { status: "success" };
       } catch {
         return {
@@ -35,22 +43,32 @@ export function TaskSubmissionForm({ taskId }: TaskSubmissionFormProps) {
   }
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor={`content-${taskId}`}>Sua resposta</Label>
+        <Label htmlFor={`content-${taskId}`}>
+          {compact ? "Resposta" : "Sua resposta"}
+        </Label>
         <Textarea
           id={`content-${taskId}`}
           name="content"
           placeholder="Escreva sua resposta aqui..."
-          rows={4}
-          required
+          rows={compact ? 3 : 5}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={`file-url-${taskId}`}>Link do arquivo (opcional)</Label>
+        <Input
+          id={`file-url-${taskId}`}
+          name="file_url"
+          type="url"
+          placeholder="https://drive.google.com/..."
         />
       </div>
       {state.status === "error" && state.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}
       <Button type="submit" disabled={isPending}>
-        {isPending ? "Enviando..." : "Enviar Tarefa"}
+        {isPending ? "Enviando..." : "Enviar tarefa"}
       </Button>
     </form>
   );

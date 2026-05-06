@@ -14,14 +14,19 @@ import {
   Landmark,
   FileText,
   ExternalLink,
+  ClipboardList,
+  CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import { getOrCreateStudentServer } from "@/lib/get-student";
 import { getStudentTurma, getTurmaTrackIds } from "@/lib/get-turma";
-import type { LessonWithTrack, Attendance } from "@/lib/types";
+import type { LessonWithTrack, Attendance, Task, TaskSubmission } from "@/lib/types";
+import { TaskSubmissionForm } from "../tarefas/task-submission-form";
 
 export const dynamic = "force-dynamic";
 
@@ -92,6 +97,34 @@ export default async function AulasPage() {
   ]);
 
   const lessons = (lessonsRes.data as LessonWithTrack[] | null) ?? [];
+  const lessonIds = lessons.map((lesson) => lesson.id);
+  const [tasksRes, submissionsRes] = lessonIds.length
+    ? await Promise.all([
+        supabase
+          .from("tasks")
+          .select("*")
+          .in("lesson_id", lessonIds)
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("task_submissions")
+          .select("*")
+          .eq("student_id", student.id),
+      ])
+    : [{ data: [] }, { data: [] }];
+
+  const tasksByLesson = new Map<string, Task[]>();
+  for (const task of (tasksRes.data as Task[] | null) ?? []) {
+    if (!task.lesson_id) continue;
+    if (!tasksByLesson.has(task.lesson_id)) tasksByLesson.set(task.lesson_id, []);
+    tasksByLesson.get(task.lesson_id)!.push(task);
+  }
+
+  const submittedTaskIds = new Set(
+    ((submissionsRes.data as TaskSubmission[] | null) ?? []).map(
+      (submission) => submission.task_id
+    )
+  );
+
   const attendedLessonIds = new Set(
     (attendancesRes.data as Pick<Attendance, "lesson_id">[] | null)?.map(
       (a) => a.lesson_id
@@ -134,6 +167,7 @@ export default async function AulasPage() {
             </h2>
             {weekLessons.map((lesson) => {
               const attended = attendedLessonIds.has(lesson.id);
+              const lessonTasks = tasksByLesson.get(lesson.id) ?? [];
               const trackColor = lesson.course_tracks?.color || "blue";
               const TrackIcon = iconMap[lesson.course_tracks?.icon || "book-open"] || BookOpen;
               const trackBadgeClasses = badgeColorMap[trackColor] || badgeColorMap.blue;
@@ -191,6 +225,66 @@ export default async function AulasPage() {
                         {lesson.material_title || "Ver Material"}
                         <ExternalLink className="h-3 w-3 text-muted-foreground" />
                       </Link>
+                    )}
+                    {lessonTasks.length > 0 && (
+                      <div className="mt-4 space-y-3 rounded-lg border bg-muted/20 p-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold">
+                          <ClipboardList className="h-4 w-4" />
+                          Tarefas desta aula
+                        </div>
+                        {lessonTasks.map((task) => {
+                          const submitted = submittedTaskIds.has(task.id);
+
+                          return (
+                            <div key={task.id} className="space-y-3 rounded-md bg-background p-3">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0 space-y-1">
+                                  <p className="text-sm font-medium">{task.title}</p>
+                                  {task.description && (
+                                    <p className="text-sm text-muted-foreground">
+                                      {task.description}
+                                    </p>
+                                  )}
+                                  {task.due_date && (
+                                    <p className="text-xs text-muted-foreground">
+                                      Prazo:{" "}
+                                      {format(new Date(task.due_date), "dd/MM/yyyy", {
+                                        locale: ptBR,
+                                      })}
+                                    </p>
+                                  )}
+                                </div>
+                                <Badge variant={submitted ? "default" : "secondary"} className="shrink-0">
+                                  {submitted ? "Feita" : "Pendente"}
+                                </Badge>
+                              </div>
+                              {submitted ? (
+                                <div className="flex items-center gap-2 text-sm text-green-700">
+                                  <CheckCircle2 className="h-4 w-4" />
+                                  Tarefa marcada como feita.
+                                </div>
+                              ) : (
+                                <div className="space-y-3">
+                                  <Link
+                                    href={`/aluno/tarefas#task-${task.id}`}
+                                    className={cn(
+                                      buttonVariants({
+                                        variant: "outline",
+                                        size: "sm",
+                                      }),
+                                      "rounded-lg"
+                                    )}
+                                  >
+                                    Abrir tarefa
+                                    <ArrowRight className="ml-1 h-3 w-3" />
+                                  </Link>
+                                  <TaskSubmissionForm taskId={task.id} compact />
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </CardContent>
                 </Card>

@@ -3,7 +3,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
-import { randomUUID } from "crypto";
 
 async function requireAdmin() {
   const { userId } = await auth();
@@ -37,10 +36,11 @@ export async function updateLesson(id: string, formData: FormData) {
   const supabase = createAdminClient();
 
   const trackId = formData.get("track_id") as string;
+  const weekNumber = Number(formData.get("week_number"));
   const { error } = await supabase
     .from("lessons")
     .update({
-      week_number: Number(formData.get("week_number")),
+      week_number: weekNumber,
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       date: formData.get("date") as string,
@@ -50,6 +50,7 @@ export async function updateLesson(id: string, formData: FormData) {
 
   if (error) throw new Error(error.message);
   revalidatePath("/admin/aulas");
+  revalidatePath(`/admin/aulas/${id}`);
 }
 
 export async function updateLessonMaterial(id: string, materialUrl: string, materialTitle: string) {
@@ -122,6 +123,24 @@ export async function openCheckin(lessonId: string) {
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/aulas/${lessonId}`);
   revalidatePath("/admin/aulas");
+}
+
+export async function markLessonAttendance(lessonId: string, studentId: string) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("attendances").upsert(
+    {
+      lesson_id: lessonId,
+      student_id: studentId,
+    },
+    { onConflict: "student_id,lesson_id" }
+  );
+
+  if (error) throw new Error(error.message);
+  revalidatePath(`/admin/aulas/${lessonId}`);
+  revalidatePath("/admin/alunos");
+  revalidatePath("/admin/certificados");
 }
 
 // ---- TASKS ----

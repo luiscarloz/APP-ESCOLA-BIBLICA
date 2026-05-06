@@ -17,18 +17,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
-import type { Lesson, Task, Student } from "@/lib/types";
+import type { CourseTrack, Lesson, Task, Student } from "@/lib/types";
 import { CheckinPasswordSection } from "./checkin-qr";
 import { MaterialForm } from "./material-form";
 import { LessonTasks } from "./lesson-tasks";
+import { LessonDetailsForm } from "./lesson-details-form";
+import { ManualAttendanceForm } from "./manual-attendance-form";
 
 export const dynamic = "force-dynamic";
 
 interface AttendanceWithStudent {
   id: string;
+  student_id: string;
   checked_in_at: string;
   students: Pick<Student, "name" | "email">;
 }
@@ -49,10 +51,10 @@ export default async function AulaDetailPage({
 
   if (!lesson) notFound();
 
-  const [attendancesRes, tasksRes] = await Promise.all([
+  const [attendancesRes, tasksRes, tracksRes, studentsRes] = await Promise.all([
     supabase
       .from("attendances")
-      .select("id, checked_in_at, students(name, email)")
+      .select("id, student_id, checked_in_at, students(name, email)")
       .eq("lesson_id", id)
       .order("checked_in_at", { ascending: true }),
     supabase
@@ -60,11 +62,16 @@ export default async function AulaDetailPage({
       .select("*")
       .eq("lesson_id", id)
       .order("created_at"),
+    supabase.from("course_tracks").select("*").order("created_at"),
+    supabase.from("students").select("id, name, email").order("name"),
   ]);
 
   const typedLesson = lesson as Lesson;
   const typedAttendances = (attendancesRes.data ?? []) as unknown as AttendanceWithStudent[];
   const lessonTasks = (tasksRes.data ?? []) as Task[];
+  const tracks = (tracksRes.data ?? []) as CourseTrack[];
+  const students = (studentsRes.data ?? []) as Pick<Student, "id" | "name" | "email">[];
+  const attendedStudentIds = typedAttendances.map((attendance) => attendance.student_id);
 
   return (
     <div className="space-y-6">
@@ -82,16 +89,7 @@ export default async function AulaDetailPage({
         </div>
       </div>
 
-      {typedLesson.description && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Descrição</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{typedLesson.description}</p>
-          </CardContent>
-        </Card>
-      )}
+      <LessonDetailsForm lesson={typedLesson} tracks={tracks} />
 
       <Separator />
 
@@ -103,7 +101,7 @@ export default async function AulaDetailPage({
 
       <Separator />
 
-      <LessonTasks lessonId={id} lessonTitle={typedLesson.title} tasks={lessonTasks} />
+      <LessonTasks lessonId={id} tasks={lessonTasks} />
 
       <Separator />
 
@@ -111,10 +109,17 @@ export default async function AulaDetailPage({
         <CardHeader>
           <CardTitle>Presenças</CardTitle>
           <CardDescription>
-            {typedAttendances.length} aluno(s) presente(s)
+            Selecione um aluno para lançar presença sem check-in.{" "}
+            {typedAttendances.length} aluno(s) presente(s).
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <ManualAttendanceForm
+            lessonId={id}
+            students={students}
+            attendedStudentIds={attendedStudentIds}
+          />
+
           {typedAttendances.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Nenhum aluno fez check-in nesta aula.

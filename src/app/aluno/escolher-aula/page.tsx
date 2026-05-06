@@ -2,6 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { getOrCreateStudentServer } from "@/lib/get-student";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 import type { CourseTrack } from "@/lib/types";
 import { TrackRanker } from "./track-ranker";
 
@@ -55,6 +57,23 @@ export default async function EscolherAulaPage() {
             </p>
           )}
         </div>
+
+        {!student.preferences_set && (
+          <Card className="border-amber-200 bg-amber-50 text-amber-950">
+            <CardContent className="flex gap-3 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+              <div className="space-y-1 text-sm">
+                <p className="font-semibold">
+                  Esta parece ser uma conta nova.
+                </p>
+                <p>
+                  Se você já participou de outras aulas e está sem histórico,
+                  tente entrar pela mesma conta que usou na primeira vez.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <TrackRanker tracks={tracks} existingOrder={existingOrder} />
       </div>

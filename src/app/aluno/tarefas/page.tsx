@@ -8,24 +8,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import type { TaskWithSubmission } from "@/lib/types";
 import { TaskSubmissionForm } from "./task-submission-form";
+import { getOrCreateStudentServer } from "@/lib/get-student";
+import { getStudentTurma, getTurmaTrackIds } from "@/lib/get-turma";
 
 export const dynamic = "force-dynamic";
 
 export default async function TarefasPage() {
   const { userId } = await auth();
+  if (!userId) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
+        <ClipboardList className="h-12 w-12 text-muted-foreground" />
+        <p className="text-muted-foreground">
+          Faça login para ver suas tarefas.
+        </p>
+      </div>
+    );
+  }
+
   const supabase = createAdminClient();
 
-  const { data: student } = await supabase
-    .from("students")
-    .select("id")
-    .eq("clerk_id", userId!)
-    .single();
-
+  const student = await getOrCreateStudentServer();
   if (!student) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-20">
@@ -37,13 +45,35 @@ export default async function TarefasPage() {
     );
   }
 
-  const { data: tasks } = await supabase
-    .from("tasks")
-    .select("*, task_submissions!left(*)")
-    .eq("task_submissions.student_id", student.id)
-    .order("created_at", { ascending: true });
+  const turma = await getStudentTurma(student.id);
+  const turmaTrackIds = turma ? await getTurmaTrackIds(turma) : [];
 
-  const taskList = (tasks as TaskWithSubmission[] | null) ?? [];
+  const [tasksRes, submissionsRes] = await Promise.all([
+    supabase
+      .from("tasks")
+      .select("*, lessons(id, title, week_number, track_id, course_tracks(name, color, icon, turma))")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("task_submissions")
+      .select("*")
+      .eq("student_id", student.id),
+  ]);
+
+  const submissionsByTask = new Map(
+    (submissionsRes.data ?? []).map((submission) => [submission.task_id, submission])
+  );
+
+  const taskList = ((tasksRes.data as TaskWithSubmission[] | null) ?? [])
+    .filter((task) => {
+      if (!task.lesson_id) return true;
+      return turmaTrackIds.includes(task.lessons?.track_id ?? "");
+    })
+    .map((task) => ({
+      ...task,
+      task_submissions: submissionsByTask.has(task.id)
+        ? [submissionsByTask.get(task.id)!]
+        : [],
+    }));
 
   return (
     <div className="space-y-6">
@@ -60,7 +90,11 @@ export default async function TarefasPage() {
           const submitted = !!submission;
 
           return (
-            <Card key={task.id}>
+            <Card
+              key={task.id}
+              id={`task-${task.id}`}
+              className="scroll-mt-24 target:ring-2 target:ring-primary/40"
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base">{task.title}</CardTitle>
@@ -79,6 +113,11 @@ export default async function TarefasPage() {
                     })}
                   </p>
                 )}
+                {task.lessons && (
+                  <p className="text-xs text-muted-foreground">
+                    Semana {task.lessons.week_number}: {task.lessons.title}
+                  </p>
+                )}
               </CardHeader>
               <CardContent>
                 {submitted ? (
@@ -87,6 +126,17 @@ export default async function TarefasPage() {
                     <p className="text-sm text-muted-foreground">
                       {submission.content || "Arquivo enviado"}
                     </p>
+                    {submission.file_url && (
+                      <a
+                        href={submission.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                      >
+                        Abrir arquivo enviado
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
                     <p className="text-xs text-muted-foreground mt-2">
                       Enviada em{" "}
                       {format(
